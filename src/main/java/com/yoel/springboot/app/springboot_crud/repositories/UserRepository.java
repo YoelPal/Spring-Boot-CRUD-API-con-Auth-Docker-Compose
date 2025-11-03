@@ -17,9 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @EntityGraph(attributePaths = {"roles"}) //Precarga los roles asociados a cada usuario evita N + 1
     @NonNull
     List<User> findAll();
+    Optional<User> findByUsername(String username);
 
 
-    @EntityGraph(attributePaths = {"roles"}) //Precarga los roles asociados a cada usuario evita N + 1
-    @NonNull
-    Optional<User> findById(@NonNull Long id);
 }

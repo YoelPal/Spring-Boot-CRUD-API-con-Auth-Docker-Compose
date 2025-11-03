@@ -1,6 +1,7 @@
 package com.yoel.springboot.app.springboot_crud.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.yoel.springboot.app.springboot_crud.entities.Role;
 import com.yoel.springboot.app.springboot_crud.entities.User;
@@ -14,6 +15,7 @@ public interface UserService {
     User update(Long id, User user);
     User changeRole(Long id, Role role);
     boolean existsByUsername(String username);
+    
 
 
 }

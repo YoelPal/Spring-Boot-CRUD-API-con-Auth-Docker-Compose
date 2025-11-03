@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteById(Long id) {
        Optional<User> userOpt = userRepository.findById(id);
-       userOpt.ifPresent(user -> userRepository.delete(user));
+       userOpt.ifPresent(userRepository::delete);
     }
 
     @Override
