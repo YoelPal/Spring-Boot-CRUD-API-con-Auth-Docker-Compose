@@ -11,12 +11,13 @@ import com.yoel.springboot.app.springboot_crud.entities.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    boolean existsByUsername( String username);
+    boolean existsByUsername(String username);
 
     @Override
     @EntityGraph(attributePaths = {"roles"}) //Precarga los roles asociados a cada usuario evita N + 1
     @NonNull
     List<User> findAll();
+    
     Optional<User> findByUsername(String username);
 
 

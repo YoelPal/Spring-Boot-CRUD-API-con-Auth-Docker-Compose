@@ -24,7 +24,7 @@ public class ProductControllerImpl extends GenericController<Product> {
 
     @Override
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product entity) {
+    public ResponseEntity<Product> createProduct( @RequestBody Product entity) {
         return super.createProduct(entity);
     }
 

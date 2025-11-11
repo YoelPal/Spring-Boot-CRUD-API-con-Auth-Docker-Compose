@@ -29,8 +29,6 @@ import static com.yoel.springboot.app.springboot_crud.security.TokenJwtConfig.*;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     
     private AuthenticationManager authenticationManager;
-
-    
     
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -66,8 +64,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 String username = user.getUsername();
                 Collection<? extends GrantedAuthority> roles = user.getAuthorities();
 
-                Claims claims = Jwts.claims().build();
-                claims.put("roles", roles);
+                Claims claims = Jwts.claims().add("roles", roles).build();
+            
 
                 String token = Jwts.builder()
                 .subject(username)
@@ -93,6 +91,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
+
+                Map<String, String> body = new java.util.HashMap<>();
+                body.put("message", "Error de autenticación: ");
+                body.put("error", failed.getMessage());
+
+                response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+                response.setContentType(CONTENT_TYPE);
+                response.setStatus(401);
     
             }
 

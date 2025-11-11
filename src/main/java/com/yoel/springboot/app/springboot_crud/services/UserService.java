@@ -1,8 +1,6 @@
 package com.yoel.springboot.app.springboot_crud.services;
 
 import java.util.List;
-import java.util.Optional;
-
 import com.yoel.springboot.app.springboot_crud.entities.Role;
 import com.yoel.springboot.app.springboot_crud.entities.User;
 

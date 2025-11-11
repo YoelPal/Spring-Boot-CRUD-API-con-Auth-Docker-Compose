@@ -34,7 +34,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
-    
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
     }
 

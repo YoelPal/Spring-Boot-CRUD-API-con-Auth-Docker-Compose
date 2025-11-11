@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yoel.springboot.app.springboot_crud.validation.ExistsByUsername;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +30,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ExistsByUsername
+    //@ExistsByUsername
     @Column(nullable = false, unique = true)
     @NotBlank(message = "no puede estar vacío")
     @Size(min = 3, message = "debe tener al menos 3 caracteres")
