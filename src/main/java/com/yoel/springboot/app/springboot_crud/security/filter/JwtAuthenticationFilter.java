@@ -55,7 +55,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return authenticationManager.authenticate(authenticationToken);
         
     }
-
     
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
@@ -64,9 +63,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 String username = user.getUsername();
                 Collection<? extends GrantedAuthority> roles = user.getAuthorities();
 
-                Claims claims = Jwts.claims().add("roles", roles).build();
+                Claims claims = Jwts.claims()
+                .add("authorities", new ObjectMapper().writeValueAsString(roles))
+                .build();
             
-
                 String token = Jwts.builder()
                 .subject(username)
                 .claims(claims)
@@ -87,7 +87,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 response.setStatus(200);
     }
     
-    
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException failed) throws IOException, ServletException {
@@ -101,8 +100,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 response.setStatus(401);
     
             }
-
-
-
-
 }

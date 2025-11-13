@@ -12,8 +12,12 @@ import jakarta.validation.ConstraintValidatorContext;
 @Component
 public class ExistsByUsernameValidator implements ConstraintValidator<ExistsByUsername, String>{
 
-   @Autowired 
+   
     private  UserService userService;
+
+    public ExistsByUsernameValidator(@Autowired UserService userService) {
+        this.userService = userService;
+    }
 
 
     @Override

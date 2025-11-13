@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +39,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
      @Transactional(readOnly = true)
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public Optional<User> findById(@NonNull Long id) {
+        return (userRepository.findById(id));
     }
 
     @Override
@@ -58,18 +59,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
-
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(@NonNull Long id) {
        Optional<User> userOpt = userRepository.findById(id);
        userOpt.ifPresent(userRepository::delete);
     }
 
     @Override
     @Transactional
-    public User update(Long id, User user) {
+    public User update(@NonNull Long id, User user) {
         Optional<User> existingUserOpt = userRepository.findById(id);
         if (existingUserOpt.isPresent()) {
             User existingUser = existingUserOpt.get();
@@ -82,7 +81,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public User changeRole(Long id, Role role) {
+    public User changeRole(@NonNull Long id, Role role) {
 
         User user = userRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(
@@ -110,5 +109,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.existsByUsername(username);   
     }
     
-
 }

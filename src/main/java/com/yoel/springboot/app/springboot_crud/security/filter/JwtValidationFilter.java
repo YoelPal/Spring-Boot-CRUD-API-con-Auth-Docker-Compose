@@ -28,7 +28,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JwtValidationFilter extends BasicAuthenticationFilter {
 
     public JwtValidationFilter(AuthenticationManager authenticationManager) {
@@ -48,9 +50,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
 
         if (header != null) {
             token = header.replace(PREFIX_TOKEN, "");
-        }
-
-
+        
         try {
             Claims claims = Jwts.parser()
                 .verifyWith(TokenJwtConfig.SECRET_KEY)
@@ -59,11 +59,15 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
                 .getPayload();
             String username = claims.getSubject();
             Object authoritiesClaims = claims.get("authorities");
-
+            
+            if  (authoritiesClaims == null || authoritiesClaims.toString().isBlank())  {
+                throw new JwtException("Token is valid but authorities claim is missing or empty.");
+            }
+            
             Collection<? extends GrantedAuthority> authorities = Arrays.asList(new ObjectMapper()
             .addMixIn(SimpleGrantedAuthority.class, SimpleGrantedAuthorityJsonCreator.class)
             .readValue(authoritiesClaims.toString().getBytes(), SimpleGrantedAuthority[].class)); 
-
+                        
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -79,6 +83,7 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
             response.getWriter().write(new ObjectMapper().writeValueAsString(body));
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(CONTENT_TYPE);
+        }
         }
 
     }

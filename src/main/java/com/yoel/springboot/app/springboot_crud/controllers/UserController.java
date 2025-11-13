@@ -1,8 +1,12 @@
 package com.yoel.springboot.app.springboot_crud.controllers;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,16 +36,29 @@ public class UserController {
         return userService.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> changeRol(@PathVariable Long id, @RequestBody Role role) {
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/changerole/{id}")
+    public ResponseEntity<User> changeRol(@NonNull @PathVariable Long id, @RequestBody Role role) {
         User user = userService.changeRole(id, role);
         return ResponseEntity.ok(user);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updaEntity(@NonNull @PathVariable Long id, @RequestBody User user) {
+        Optional<User> userOpt = userService.findById(id);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+            
+        }
+        User userUpdated = userService.update(id, user);
+        return ResponseEntity.ok(userUpdated);
+    }
+  
 }
