@@ -1,0 +1,10 @@
+### .dockerignore ###
+target/
+build/
+.mvn/
+.gradle/
+.git/
+.gitignore
+Dockerfile
+docker-compose.yml
+**/.*

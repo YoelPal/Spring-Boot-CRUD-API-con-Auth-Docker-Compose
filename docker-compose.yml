@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # 1. SERVICIO DE BASE DE DATOS: MYSQL
+  db:
+    image: mysql:8.0 # Utiliza la imagen oficial de MySQL, versión 8.0
+    container_name: mysql_db
+    restart: always
+    # Variables de Entorno para configurar la DB
+    environment:
+      # Credenciales de Root
+      MYSQL_ROOT_PASSWORD: rootpassword
+      # Credenciales para la aplicación Spring Boot
+      MYSQL_USER: user  
+      MYSQL_PASSWORD: password 
+      MYSQL_DATABASE: springboot_crud # El nombre de la base de datos
+    ports:
+      - "3306:3306" # Mapeo de puertos (acceso desde tu máquina)
+    # Volumen para persistencia de datos (los datos se guardan aunque se detenga el contenedor)
+    volumes:
+      - mysql_data:/var/lib/mysql
+      
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. SERVICIO DE APLICACIÓN: TU SPRING BOOT APP
+  app:
+    build: . # Construye la imagen usando el Dockerfile en este directorio
+    image: spring-security-app:latest # Nombre de la imagen que creaste
+    container_name: spring_app
+    restart: always # Hace que el contenedor intente reiniciarse si falla
+    ports:
+      - "8080:8080" # Mapeo de puertos para acceder a la aplicación
+    # **DEPENDENCIA CRÍTICA:** Espera a que el servicio 'db' esté activo antes de iniciar
+    depends_on:
+      db:
+        condition: service_healthy
+    # Variables de Entorno para que la App sepa dónde encontrar a la DB
+    environment:
+      # HOST: Usamos el nombre del servicio 'db' en lugar de 'localhost'
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/springboot_crud
+      SPRING_DATASOURCE_PASSWORD: password
+      # Propiedad necesaria para MySQL 8+ con Hibernate
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+
+
+# Definición del volumen para la persistencia de datos de MySQL
+volumes:
+  mysql_data:
